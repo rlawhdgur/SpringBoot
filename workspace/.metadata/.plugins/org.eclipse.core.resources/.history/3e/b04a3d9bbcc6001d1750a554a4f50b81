@@ -1,0 +1,68 @@
+package com.human.config;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
+@Configuration 				// 이 클래스를 스프링 설정 빈으로 등록
+@EnableWebSecurity			// 이 클래스에 스프링 시큐리티 기능 활성화
+public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
+	// 설정 
+	@Override
+	protected void configure(HttpSecurity http) throws Exception {
+		
+		// 인증 : 아이디/비밀번호로 가입된 사용자 인지, 입증
+		// 인가 : 사용자에 대한 권한을 부여하는 것
+		
+		// 인가
+		// authorizeRequests() 		: URL 요청에 대한 접근권한 설정
+		// antMatchers()			: 경로 지정
+		// permitAll()				: 모두에게 접근 허용
+		// hasRole(), hasAnyRoles()	: 특정권한을 가진 사용자만 허용
+		http.authorizeRequests()
+				.antMatchers("/").permitAll()
+				.antMatchers("/admin").hasRole("ADMIN")		// 관리자만 접근 허용
+				.anyRequest().authenticated()
+				;	
+		
+		// 로그인 설정
+		http.formLogin()
+			.defaultSuccessUrl("/")
+			.permitAll()
+			;
+	}
+	
+	
+	// 인 메모리 방식으로 사용자 등록
+	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+		
+		// inMemory 방식으로 인증 사용자 등록
+		// ID : user 	/ pw : 1234 	/ 권한 : user
+		// ID : damin 	/ pw : 1234 	/ 권한 : admin
+		
+		auth.inMemoryAuthentication()
+		.withUser("user").password("{noop}123456").roles("USER")
+		.and()
+		.withUser("admin").password("{noop}123456").roles("ADMIN")
+		;
+		
+	}
+	
+	// DB연결방식으로 인증 .. 
+	
+	
+
+	// 암호화 방식 등록
+	@Bean
+	public BCryptPasswordEncoder passwordEncoder() {
+		return new BCryptPasswordEncoder();
+	}
+
+	
+}

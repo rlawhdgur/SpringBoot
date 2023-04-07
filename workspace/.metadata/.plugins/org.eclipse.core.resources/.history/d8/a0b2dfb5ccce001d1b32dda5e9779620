@@ -1,0 +1,58 @@
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+    
+<!-- namespace : 매퍼 인터페이스의 경로 작성 -->
+<mapper namespace="com.human.mapper.BoardMapper">
+
+	
+	<!-- 게시글 목록 -->
+	<select id="list" resultType="Board">
+		SELECT *
+		FROM board_test
+		ORDER BY reg_date DESC
+	</select>
+	
+	<!-- 게시글 쓰기 -->
+	<insert id="write">
+		INSERT INTO board_test (title, writer, content)
+		VALUES (#{title}, #{writer}, #{content})
+	</insert>
+	
+	<!-- 게시글 읽기 -->
+	<select id="read" resultType="Board">
+		SELECT *
+		FROM board_test
+		WHERE board_no = #{boardNo}
+	</select>
+	
+	<!-- 게시글 수정 -->
+	<update id="update">
+		UPDATE board_test
+		SET title = #{title},
+			writer = #{writer},
+			content = #{content},
+			upd_date = now(),
+		WHERE board_no = #{boardNo}
+	</update>
+	
+	<!-- 게시글 삭제 -->
+	<delete id="delete">
+		DELETE 
+		FROM board_test
+		WHERE board_no = #{boardNo}
+	</delete>
+	
+
+</mapper>
+
+
+
+
+
+
+
+
+
+

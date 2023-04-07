@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<title>메인화면</title>
+</head>
+<body>
+	<h1>게시판 테스트</h1>
+	<h2>2023.03.30</h2>
+	<ul>
+		<li>Spring Boot 2.7.9</li>
+		<li>MySQL</li>
+		<li>Mybatis 3.0</li>
+		<li>Thymeleaf</li>
+	</ul>
+	
+	<a herf="/board/list">게시물 보기</a>
+</body>
+</html>

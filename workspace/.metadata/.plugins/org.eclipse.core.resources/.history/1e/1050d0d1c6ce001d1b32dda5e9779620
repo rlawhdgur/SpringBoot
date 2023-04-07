@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<title>글쓰기</title>
+</head>
+<body>
+	<h1>글쓰기</h1>
+	
+	<form action="/board/write" method="POST">
+	<table>
+		<tr>
+			<td>제목</td>
+			<td>
+				<input type="text" name="title">
+			</td>
+		</tr>
+		<tr>
+			<td>작성자</td>
+			<td>
+				<input type="text" name="writer">
+			</td>
+		</tr>
+		<tr>
+			<td>내용</td>
+			<td>
+				<textarea rows="10" cols="40" name="content"></textarea>
+			</td>
+		</tr>
+		<div>
+			<button type="submit">등록</button>
+			<button type="button" id="btnList">목록</button>
+		<div>
+	</table>
+	</form>
+	
+<script src='https://code.jquery.com/jquery-3.4.1.js'></script>
+<script>
+$(document)
+.on('click', '#btnList', function(){
+	document.location = '/board/list';
+})
+
+</script>
+</body>
+</html>

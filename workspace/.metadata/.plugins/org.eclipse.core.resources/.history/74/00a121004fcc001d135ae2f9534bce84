@@ -1,0 +1,134 @@
+package com.human.service;
+
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
+import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
+import org.springframework.security.oauth2.core.user.OAuth2User;
+import org.springframework.stereotype.Service;
+
+import com.human.domain.CustomUser;
+import com.human.domain.OAuthAttributes;
+import com.human.domain.Users;
+import com.human.mapper.UserMapper;
+
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
+@Service
+public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
+	
+//	@Autowired
+//	private UserMapper userMapper;
+	
+	@Autowired
+	private UserService userService;
+	
+	@Override
+	public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
+	
+		log.info("loadUser() ...");
+	
+		OAuth2UserService delegate = new DefaultOAuth2UserService();
+		OAuth2User oAuth2User = delegate.loadUser(userRequest);
+		
+		String registrationId = userRequest.getClientRegistration().getRegistrationId();
+		String userNameAttributeName= userRequest.getClientRegistration().getProviderDetails()
+												 .getUserInfoEndpoint().getUserNameAttributeName();
+		
+		log.info("loadUser registrationId = " + registrationId);
+		log.info("loadUser userNameAttributeName = " + userNameAttributeName);
+		
+		OAuthAttributes attributes = OAuthAttributes.of(registrationId, userNameAttributeName, oAuth2User.getAttributes());
+		
+		log.info("attributes - " + attributes.getAttributes());
+		
+		
+		String nameAttributeKey = attributes.getNameAttributeKey();
+		String name = attributes.getName();
+		String email = attributes.getEmail();
+		String picture = attributes.getPicture();
+		String id = attributes.getId();
+		String socialType = "";
+		String uuPw = "";
+		String uuNickname = "";
+		
+		
+		if("naver".equals(registrationId)) {
+        	socialType = "naver";
+        	uuPw = UUID.randomUUID().toString().replace("-", "");
+        	uuNickname = UUID.randomUUID().toString().replace("-", "");
+        	
+        	
+        }
+		else if("kakao".equals(registrationId)) {
+			socialType = "kakao";
+			uuPw = UUID.randomUUID().toString().replace("-", "");
+        	uuNickname = UUID.randomUUID().toString().replace("-", "");
+
+		}
+        else {
+        	socialType = "google";
+        	uuPw = UUID.randomUUID().toString().replace("-", "");
+        	uuNickname = UUID.randomUUID().toString().replace("-", "");
+
+        }
+
+		log.info("loaduser - nameAttributeKey =  " + nameAttributeKey);
+		log.info("loaduser - id =  " + id);
+		log.info("loaduser - socialType =  " + socialType);
+		log.info("loaduser - name =  " + name);
+		log.info("loaduser - email =  " + email);
+		log.info("loaduser - picture =  " + picture);
+		log.info("loaduser - UUID(PW) = " + uuPw);
+		log.info("loaduser - UUID(nickname) = " + uuNickname);
+		
+		if( name == null ) name = "";
+		if( email == null ) email = "";
+		
+		// 이메일이 존재하는지 확인
+		
+		
+		Users user = new Users();
+		user.setUserId(id);
+		user.setUserPw(uuPw);
+		user.setName(name);
+		user.setNickname(uuNickname);
+		user.setEmail(email);
+		
+		int result = 0;
+		try {
+			Users joinedUser = userService.selectEmail(user);
+			if( joinedUser == null ) {
+				result = userService.join(user);
+			}
+		} 
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+			
+//		// 회원가입 시
+//		if( result > 0 ) {
+//			
+//		}
+				
+
+		// 권한 등록
+		List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+		
+		// 실제 권한조회 로직으로 변경할 것
+		SimpleGrantedAuthority authority = new SimpleGrantedAuthority("ROLE_USER");
+		authorities.add(authority);
+		
+		return new CustomUser(name, authorities, attributes);
+	}
+	
+	
+}

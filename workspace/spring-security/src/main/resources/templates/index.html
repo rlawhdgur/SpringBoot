@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+				xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+	<meta charset="UTF-8">
+	<title>SPRING SECURITY</title>
+</head>
+<body>
+	<h1>SPRING SECURITY</h1>
+	<h2>인증 & 인가()</h2>
+	<p> 로그인 & 회원가입 </p>
+	
+	<ul>
+		<li>기본 ID : user</li>
+		<li>기본 PW : 서버 실행 시, 로그에 출력된 UID 형식</li>
+		<li>기본 로그인 경로 : /login</li>
+		<li>기본 로그아웃 경로 : /logout</li>
+		<li><a href="/user">사용자 페이지</a></li>
+		<li><a href="/admin">관리자 페이지</a></li>
+	</ul>
+	
+	<div>
+		<a href="/login">로그인</a>
+		<a href="/join">회원가입</a>
+	</div>
+	
+	<!-- 익명 사용자 (비로그인) -->
+	<th:block sec:authorize="isAnonymous()">
+		<div>
+			<a href="/login">로그인</a>
+		</div>
+	</th:block>
+	
+	<!-- 인증된 사용자 (로그인) -->
+	<th:block sec:authorize="isAuthenticated()">
+		<div>
+			<form action="logout">
+				<span sec:authentication="principal.username"></span>
+				<span sec:authentication="principal.authorities"></span>
+				<button type="submit">로그아웃</button>
+			</form>
+		</div>
+	</th:block>
+	
+	
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

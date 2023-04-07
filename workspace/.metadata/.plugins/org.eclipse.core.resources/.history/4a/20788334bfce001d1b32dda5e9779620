@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<title>게시글 목록</title>
+</head>
+<body>
+	<h1>게시글 목록</h1>
+	
+	<a href="/board/write">글쓰기</a>
+	<table>
+		<tr>
+			<th width="50">번호</th>
+			<th width="300">제목</th>
+			<th width="100">작성자</th>
+			<th width="200">등록일자</th>
+			<th width="200">수정일자</th>
+		</tr>
+		
+		<th:block th:each="board : ${boardList}">
+			<tr>
+				<td width="50" align="center" th:text="${board.boardNo}"></td>
+		 		<td width="300">
+		 			<a th:href="|/board/read?boardNo=${board.boardNo}|" th:text="${board.title}"></a>
+		 		</td>
+		 		<td width="100" align="center" th:text="${board.writer}"></td>
+		 		<td width="200" align="center">
+		 			<span th:text="${#temporals.format(board.regDate, 'yyy-MM-dd HH:mm:ss')}"></span>
+		 		</td>
+		 		<td width="200" align="center">
+		 			<span th:text="${#temporals.format(board.updDate, 'yyy-MM-dd HH:mm:ss')}"></span>
+		 		</td>
+			</tr>
+		
+		</th:block>
+	</table>
+</body>
+</html>

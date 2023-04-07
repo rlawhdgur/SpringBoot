@@ -1,0 +1,43 @@
+package com.human.controller;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+
+import com.human.domain.Board;
+import com.human.service.BoardService;
+
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
+@Controller
+public class BoardController {
+	
+	@Autowired
+	private BoardService boardService;
+	
+	@GetMapping({"", "/"})
+	public String doIndex() {
+		
+		return "index";
+	}
+	
+	@GetMapping("/board/list")
+	public String doList() throws Exception {
+		
+		List<Board> boardList = boardService.list();
+		
+		return "board/list";
+	}
+	
+	@GetMapping("/board/write")
+	public String doWrite() {
+		
+		return "board/write";
+	}
+	
+	
+}
